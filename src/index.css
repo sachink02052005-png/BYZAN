@@ -1,0 +1,215 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   BYZAN DESIGN SYSTEM: TOKENS
+   Single source of truth. Every colour, font, size and easing used in the
+   UI must come from here so the whole site can be re-themed in one file.
+   ========================================================================== */
+
+@theme {
+  /* ---- Colour ---------------------------------------------------------- */
+  /* Surfaces (dark, warm; never pure black) */
+  --color-nero: #0e0d0c;          /* page background */
+  --color-nero-soft: #161412;     /* alternate section background */
+  --color-nero-raised: #1f1c19;   /* cards, drawers, inputs */
+  --color-notte: #141b2d;         /* deep midnight-navy accent surface */
+
+  /* Text / light surfaces (warm ivory; never pure white) */
+  --color-avorio: #f3eee5;        /* primary text, light sections */
+  --color-avorio-dim: #d8d1c4;    /* secondary light surface */
+  --color-pietra: #8f887c;        /* muted text (AA contrast on nero) */
+
+  /* Accent (use sparingly: CTAs, hairlines, active states) */
+  --color-bronzo: #b08d57;
+  --color-bronzo-light: #c9a877;
+
+  /* ---- Typography ------------------------------------------------------ */
+  --font-display: "Cormorant Garamond", "Times New Roman", Georgia, serif;
+  --font-sans: "Jost", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Display scale (fluid) */
+  --text-display-xl: clamp(3.25rem, 1rem + 8vw, 9rem);
+  --text-display-xl--line-height: 0.95;
+  --text-display-xl--letter-spacing: -0.015em;
+
+  --text-display-lg: clamp(2.5rem, 1rem + 5vw, 6rem);
+  --text-display-lg--line-height: 1;
+  --text-display-lg--letter-spacing: -0.01em;
+
+  --text-display-md: clamp(2rem, 1rem + 3vw, 3.75rem);
+  --text-display-md--line-height: 1.05;
+
+  --text-display-sm: clamp(1.5rem, 1rem + 1.25vw, 2.25rem);
+  --text-display-sm--line-height: 1.15;
+
+  /* Body + UI scale */
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.75;
+
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1;
+  --text-eyebrow--letter-spacing: 0.24em;
+
+  /* ---- Motion (CSS side; JS twins live in src/lib/motion.js) ------------ */
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);   /* soft, long ease-out */
+  --ease-cinema: cubic-bezier(0.65, 0, 0.35, 1); /* symmetrical in-out */
+}
+
+/* ==========================================================================
+   GLOBAL LAYOUT VARIABLES
+   z-index scale: header 40 · overlay/menu 50 · skip-link 60
+   ========================================================================== */
+
+:root {
+  --header-height: 4.5rem;
+  color-scheme: dark;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --header-height: 5.25rem;
+  }
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-padding-top: var(--header-height);
+  }
+
+  body {
+    margin: 0;
+    min-height: 100svh;
+    background-color: var(--color-nero);
+    color: var(--color-avorio);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 300;
+  }
+
+  ::selection {
+    background-color: var(--color-bronzo);
+    color: var(--color-nero);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-bronzo-light);
+    outline-offset: 4px;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   LENIS (smooth scroll). Required rules from the Lenis docs.
+   Note: native `scroll-behavior: smooth` must NOT be set; it fights Lenis.
+   ========================================================================== */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   COMPONENT-LEVEL UTILITIES
+   ========================================================================== */
+
+/* Standard page gutter + max width */
+@utility container-luxe {
+  width: 100%;
+  max-width: 96rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 4rem);
+}
+
+/* Small uppercase wide-tracked label (chapter markers, nav, buttons) */
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-eyebrow);
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* 1px bronze rule used as a decorative divider */
+@utility rule-bronzo {
+  height: 1px;
+  background-color: var(--color-bronzo);
+  opacity: 0.6;
+}
+
+/* Vertical "scroll" cue line animation (hero placeholder + future hero) */
+@keyframes scroll-cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  51% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+@utility animate-scroll-cue {
+  animation: scroll-cue 2.4s var(--ease-cinema) infinite;
+}
